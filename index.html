@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1769aa">
+<link rel="manifest" href="manifest.json">
+<title>My Planner</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#eef3f7;color:#17212b}
+.app{max-width:760px;margin:auto;padding:16px}.hero{background:#1769aa;color:white;padding:20px;border-radius:18px;margin-bottom:14px}
+h1{margin:0 0 5px;font-size:27px}.sub{opacity:.9}
+.card{background:white;border-radius:16px;padding:16px;margin:12px 0;box-shadow:0 2px 10px #00000010}
+label{font-weight:650;display:block;margin:10px 0 6px}input,textarea,select,button{font:inherit}input,textarea,select{width:100%;padding:11px;border:1px solid #ccd5dc;border-radius:10px;background:white}textarea{min-height:70px;resize:vertical}
+button{border:0;border-radius:10px;padding:11px 14px;cursor:pointer}.primary{background:#1769aa;color:white}.danger{background:#ffe8e8;color:#a51d2d}.ghost{background:#eef3f7}.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}.day input{display:none}.day span{display:block;text-align:center;padding:9px 3px;border-radius:9px;background:#edf1f4;font-size:12px}.day input:checked+span{background:#1769aa;color:white}
+.hidden{display:none}.toolbar{display:flex;gap:7px;flex-wrap:wrap}.toolbar button.active{background:#1769aa;color:white}
+.task{border-left:5px solid #1769aa}.task.done{opacity:.68;border-left-color:#4d9f62}.task.done .title{text-decoration:line-through}.tasktop{display:flex;gap:10px;align-items:flex-start}.check{width:22px;height:22px;flex:none;margin-top:3px}.title{font-weight:750;font-size:18px}.meta{font-size:13px;color:#63717d;margin-top:3px}.remark{margin-top:10px;padding:10px;background:#f5f7f9;border-radius:9px;white-space:pre-wrap}.empty{text-align:center;color:#697780;padding:25px}
+.small{font-size:12px;color:#65737d}.actions{margin-top:10px}.actions button{padding:8px 10px}.section-title{display:flex;justify-content:space-between;align-items:center}
+@media(max-width:480px){.app{padding:10px}.days span{font-size:11px;padding:8px 1px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hero"><h1>My Planner</h1><div class="sub">Tasks, recurring days, completion & remarks</div></div>
+
+  <div class="card">
+    <div class="section-title"><h2 id="formTitle">Add task</h2><button class="ghost hidden" id="cancelEdit">Cancel</button></div>
+    <label>Sign / Title</label><input id="title" placeholder="e.g. Open shop">
+    <label>To-do</label><input id="todo" placeholder="What do you need to do?">
+    <div class="row">
+      <div><label>Start date</label><input id="date" type="date"></div>
+      <div><label>Repeat</label><select id="repeat"><option value="none">Does not repeat</option><option value="daily">Every day</option><option value="weekly">Selected days</option><option value="monthly">Every month</option></select></div>
+    </div>
+    <div id="dayBox" class="hidden">
+      <label>Select days</label>
+      <div class="days">
+        <label class="day"><input type="checkbox" value="1"><span>Mon</span></label>
+        <label class="day"><input type="checkbox" value="2"><span>Tue</span></label>
+        <label class="day"><input type="checkbox" value="3"><span>Wed</span></label>
+        <label class="day"><input type="checkbox" value="4"><span>Thu</span></label>
+        <label class="day"><input type="checkbox" value="5"><span>Fri</span></label>
+        <label class="day"><input type="checkbox" value="6"><span>Sat</span></label>
+        <label class="day"><input type="checkbox" value="0"><span>Sun</span></label>
+      </div>
+    </div>
+    <div class="row">
+      <div><label>Reminder</label><select id="reminder"><option value="off">Off</option><option value="at">At task time</option><option value="5">5 min before</option><option value="15">15 min before</option><option value="30">30 min before</option><option value="60">1 hour before</option></select></div>
+      <div><label>Reminder time</label><input id="time" type="time"></div>
+    </div>
+    <label>End repeat date <span class="small">(optional)</span></label><input id="endDate" type="date">
+    <label>Remark</label><textarea id="remark" placeholder="Add notes, instructions, or anything you want to remember..."></textarea>
+    <div class="row" style="margin-top:12px"><button class="primary" id="save">Add to planner</button><button class="ghost" id="notify">Allow notifications</button></div>
+  </div>
+
+  <div class="card">
+    <div class="toolbar">
+      <button class="active" data-filter="all">All</button><button data-filter="pending">Pending</button><button data-filter="done">Completed</button>
+      <input id="search" placeholder="Search tasks..." style="flex:2;min-width:150px">
+    </div>
+  </div>
+
+  <div id="tasks"></div>
+
+  <div class="card">
+    <div class="section-title"><strong>Backup</strong></div>
+    <p class="small">Export your tasks before making major changes. Import restores a backup without deleting unrelated tasks.</p>
+    <div class="row"><button class="ghost" id="export">Export backup</button><button class="ghost" id="importBtn">Import backup</button><input id="importFile" type="file" accept=".json" class="hidden"></div>
+  </div>
+</div>
+
+<script>
+const KEY='my_planner_v3';
+let tasks=JSON.parse(localStorage.getItem(KEY)||'[]'), filter='all', editing=null;
+const $=id=>document.getEloEloEloEloEloEloEloEloEloEloEloEloEloEloEloEloEloEl
